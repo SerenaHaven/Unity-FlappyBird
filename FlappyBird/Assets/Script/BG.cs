@@ -16,4 +16,9 @@ public class BG : MonoBehaviour
     {
         view.RandomSkin();
     }
+
+    public void SetTileCount(int tileCount)
+    {
+        view.SetTileCount(tileCount);
+    }
 }

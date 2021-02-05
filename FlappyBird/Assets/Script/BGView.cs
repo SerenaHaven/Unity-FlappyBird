@@ -8,10 +8,7 @@ public class BGView : MonoBehaviour
     {
         get
         {
-            if (_spriteRenderer == null)
-            {
-                _spriteRenderer = GetComponent<SpriteRenderer>();
-            }
+            if (_spriteRenderer == null) { _spriteRenderer = GetComponent<SpriteRenderer>(); }
             return _spriteRenderer;
         }
     }
@@ -23,5 +20,10 @@ public class BGView : MonoBehaviour
             var index = Random.Range(0, _bgs.Length);
             spriteRenderer.sprite = _bgs[index];
         }
+    }
+
+    public void SetTileCount(int tileCount)
+    {
+        spriteRenderer.size = new Vector2(tileCount * 2.88f, 5.12f);
     }
 }

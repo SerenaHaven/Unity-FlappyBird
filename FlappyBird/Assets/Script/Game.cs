@@ -13,18 +13,14 @@ public enum GameState
 
 public class Game : MonoBehaviour
 {
-    public Action onGameOver;
-    public Action onGameReady;
-    public Action onScoreChange;
-
-    public GameState gameState = GameState.Idle;
-
     private Bird _bird;
     private Land _land;
     private BG _bg;
 
-    private Transform _pipeStartAnchor = null;
-    private Transform _birdStartAnchor = null;
+    private Vector3 _birdIdlePosition = new Vector3(0.0f, 0.35f, 0.0f);
+    private Vector3 _birdStartPosition = new Vector3(-0.72f, 0.25f, 0.0f);
+    private Vector3 _pipeStartPosition = new Vector3(2.88f, 0.25f, 0.0f);
+    
     private float _interval = 1.0f;
     private float _timer = 0.0f;
     private float _pipeSpeed = 2.0f;
@@ -34,16 +30,18 @@ public class Game : MonoBehaviour
     private readonly HashSet<Pipe> _actives = new HashSet<Pipe>();
     private readonly HashSet<Pipe> _toRemoves = new HashSet<Pipe>();
 
+    public Action onGameOver;
+    public Action onGameReady;
+    public Action onScoreChange;
+
+    public GameState gameState = GameState.Idle;
     public int score { get; set; } = 0;
 
     void Awake()
     {
-        _birdStartAnchor = GameObject.Find("BirdStartAnchor").transform;
-        _pipeStartAnchor = GameObject.Find("PipeStartAnchor").transform;
-
         _bird = FindObjectOfType<Bird>();
         _bird.rig2D.simulated = false;
-        _bird.transform.position = Vector2.up * 0.25f;
+        _bird.transform.position = _birdIdlePosition;
 
         _bird.Idle();
         _bird.onThrough = OnThrough;
@@ -56,6 +54,14 @@ public class Game : MonoBehaviour
 
         _pipePrefab = GameObject.Find("Pipe");
         _pipePrefab.SetActive(false);
+
+        var halfWidth = Camera.main.orthographicSize * Camera.main.aspect;
+        _birdStartPosition = new Vector3(-halfWidth * 0.5f, 0.25f, 0.0f);
+        _pipeStartPosition = new Vector3(halfWidth + 0.5f, 0.0f, 0.0f);
+
+        var tileCount = Mathf.CeilToInt(halfWidth / 1.44f);
+        _bg.SetTileCount(tileCount);
+        _land.SetTileCount(tileCount);
     }
 
     private void OnThrough()
@@ -81,7 +87,7 @@ public class Game : MonoBehaviour
     public void GameReady()
     {
         DespawnPipeAll();
-        _bird.transform.position = _birdStartAnchor.position;
+        _bird.transform.position = _birdStartPosition;
         _bird.Idle();
         _bird.SetSkin();
         _bird.rig2D.simulated = false;
@@ -95,7 +101,7 @@ public class Game : MonoBehaviour
     public void GameStart()
     {
         DespawnPipeAll();
-        _bird.transform.position = _birdStartAnchor.position;
+        _bird.transform.position = _birdStartPosition;
         _bird.Idle();
         _bird.rig2D.simulated = true;
         _land.stopped = false;
@@ -120,7 +126,7 @@ public class Game : MonoBehaviour
         {
             var pipe = SpawnPipe();
             pipe.gameObject.SetActive(true);
-            pipe.transform.position = _pipeStartAnchor.transform.position + Vector3.up * Random.Range(-0.5f, 1.5f);
+            pipe.transform.position = _pipeStartPosition + Vector3.up * Random.Range(-0.5f, 1.5f);
             pipe.rig2D.simulated = true;
             pipe.rig2D.velocity = Vector2.left * _pipeSpeed;
             _timer = Time.time;
@@ -147,7 +153,7 @@ public class Game : MonoBehaviour
             _bird.Jump();
         }
 
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             Audio.PlayOneShot(AudioEnum.Wing);
             _bird.Jump();

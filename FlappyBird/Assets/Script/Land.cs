@@ -17,4 +17,9 @@ public class Land : MonoBehaviour
         get { return view.stopped; }
         set { view.stopped = value; }
     }
+
+    public void SetTileCount(int tileCount)
+    {
+        view.SetTileCount(tileCount);
+    }
 }
