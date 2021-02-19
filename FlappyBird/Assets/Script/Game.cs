@@ -19,8 +19,8 @@ public class Game : MonoBehaviour
 
     private Vector3 _birdIdlePosition = new Vector3(0.0f, 0.35f, 0.0f);
     private Vector3 _birdStartPosition = new Vector3(-0.72f, 0.25f, 0.0f);
-    private Vector3 _pipeStartPosition = new Vector3(2.88f, 0.25f, 0.0f);
-    
+    private Vector3 _pipeStartPosition = new Vector3(5.76f, 0.25f, 0.0f);
+
     private float _interval = 1.0f;
     private float _timer = 0.0f;
     private float _pipeSpeed = 2.0f;
@@ -57,7 +57,7 @@ public class Game : MonoBehaviour
 
         var halfWidth = Camera.main.orthographicSize * Camera.main.aspect;
         _birdStartPosition = new Vector3(-halfWidth * 0.5f, 0.25f, 0.0f);
-        _pipeStartPosition = new Vector3(halfWidth + 0.5f, 0.0f, 0.0f);
+        _pipeStartPosition = new Vector3(halfWidth + 2.88f, 0.0f, 0.0f);
 
         var tileCount = Mathf.CeilToInt(halfWidth / 1.44f);
         _bg.SetTileCount(tileCount);
